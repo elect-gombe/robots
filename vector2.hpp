@@ -4,6 +4,7 @@ public:
   int x;
   int y;
 
+  
   vector2(int _x,int _y):x(_x),y(_y){}
   vector2(const vector2& v):x(v.x),y(v.y){};
   vector2():x(0),y(0){};
