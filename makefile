@@ -1,6 +1,6 @@
 OBJS = $(patsubst %.cpp,%.o,$(wildcard ./*.cpp))
 CC = g++
-DEBUG = -g
+DEBUG = -g3
 CFLAGS = -Wall -c $(DEBUG)
 LFLAGS = -Wall $(DEBUG)
 

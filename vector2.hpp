@@ -60,3 +60,26 @@ vector2 operator-(const vector2& v1,const vector2& v2){
 
   return w;
 }
+
+inline static
+vector2 nearest_direction(vector2 v1,vector2 v2){
+  vector2 vr;
+
+  if(v1.x < v2.x){
+    vr.x = 1;
+  }else if(v1.x > v2.x){
+    vr.x = -1;
+  }else{
+    vr.x = 0;
+  }
+  
+  if(v1.y < v2.y){
+    vr.y = 1;
+  }else if(v1.y > v2.y){
+    vr.y = -1;
+  }else{
+    vr.y = 0;
+  }
+
+  return vr;
+}

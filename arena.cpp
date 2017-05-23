@@ -4,6 +4,20 @@
 #include <stdlib.h>
 #include <assert.h>
 
+int arena::kill(arena_e e){
+  int score;
+  switch(e){
+  case _ROBOT1:
+    score = 10;
+    break;
+  default:
+    score = -1;
+    break;
+  }
+
+  return score;
+}
+
 void arena::printe(const arena_e e){
   switch(e){
   case _NONE:
@@ -11,6 +25,9 @@ void arena::printe(const arena_e e){
     break;
   case _ROBOT1:
     std::cout<<"+";
+    break;
+  case _HEAP:
+    std::cout<<"#";
     break;
   }
 }
@@ -32,7 +49,7 @@ void arena::setrobots(const int num,vector2& p){
 
   //last one will be mutation!
   for(int i=0;i<num+1;i++){
-    aren[i%width][i/width] = _ROBOT1;
+    aren[i/width][i%width] = _ROBOT1;
   }
   
   {
@@ -55,13 +72,48 @@ void arena::setrobots(const int num,vector2& p){
   p = vlast;
 }
 
-void update(){
+int arena::update(vector2 p){
+  vector2 i;
+  vector2 d;
+  vector2 n;
+  arena temp_arena(this);
+  int score = 0;
+
+  for(i.y=0;i.y<height;i.y++){
+    for(i.x=0;i.x<width;i.x++)
+      if(temp_arena[i] == _ROBOT1)temp_arena[i] = _NONE;
+  }
   
+  temp_arena.print(p);
+  for(i.y=0;i.y<height;i.y++){
+    for(i.x=0;i.x<width;i.x++) {
+      if(operator[](i) == _ROBOT1){
+	d = nearest_direction(i,p);
+	n = d+i;
+	std::cout << "("<< d.x <<","<<d.y<<")"; 
+	if(temp_arena[n] != _NONE){
+	  score += kill(temp_arena[i]);
+	  temp_arena[n] = _HEAP;
+	}else{
+	  temp_arena[n] = operator[](i);
+	}
+      }else{
+	temp_arena[i] = operator[](i);
+      }
+    }
+  }
+
+  for(i.y=0;i.y<height;i.y++){
+    for(i.x=0;i.x<width;i.x++)
+      operator[](i) = temp_arena[i];
+  }
 }
 
+
 void arena::clear(){
-  for(int i=0;i<height;i++){
-    for(int j=0;j<width;j++) aren[i][j] = _NONE;
+  vector2 i;
+  for(i.y=0;i.y<height;i.y++){
+    for(i.x=0;i.x<width;i.x++) operator[](i) = _NONE;
   }
 }
 
@@ -75,8 +127,20 @@ arena::arena(int _width,int _height){
   clear();
 }
 
+arena::arena(arena *a){
+  width = a->get_width();
+  height = a->get_height();
+  aren = new arena_e*[height];
+  for(int i=0;i<height;i++){
+    aren[i] = new arena_e[width];
+    for(int j=0;j<width;j++){
+      aren[i][j] = a->aren[i][j];
+    }
+  }
+}
+
 arena::~arena(){
-  for(int i=0;i<width;i++){
+  for(int i=0;i<height;i++){
     delete []aren[i];
   }
   delete []aren;
