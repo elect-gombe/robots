@@ -90,15 +90,16 @@ int arena::update(vector2 p){
       if(operator[](i) == _ROBOT1){
 	d = nearest_direction(i,p);
 	n = d+i;
-	std::cout << "("<< d.x <<","<<d.y<<")"; 
+	// std::cout << "d("<< d.x <<","<<d.y<<")";
+	// std::cout<<std::endl;
+	// std::cout << "n("<< n.x <<","<<n.y<<")"; 
+	// std::cout<<std::endl;
 	if(temp_arena[n] != _NONE){
 	  score += kill(temp_arena[i]);
 	  temp_arena[n] = _HEAP;
 	}else{
 	  temp_arena[n] = operator[](i);
 	}
-      }else{
-	temp_arena[i] = operator[](i);
       }
     }
   }
