@@ -9,6 +9,7 @@ int arena::kill(arena_e e){
   switch(e){
   case _ROBOT1:
     score = 10;
+    robotsc--;
     break;
   default:
     score = -1;
@@ -18,7 +19,7 @@ int arena::kill(arena_e e){
   return score;
 }
 
-void arena::printe(const arena_e e){
+void arena::printe(arena_e e){
   switch(e){
   case _NONE:
     std::cout<<" ";
@@ -29,18 +30,49 @@ void arena::printe(const arena_e e){
   case _HEAP:
     std::cout<<"#";
     break;
+  case _PLAYER:
+    std::cout<<"@";
+    break;
   }
 }
-void arena::print(const vector2& p){
+
+void arena::print(){
   vector2 i;
 
-  for(i.x=0;i.x<width;i.x++){
-    for(i.y=0;i.y<height;i.y++){
-      if(p==i)std::cout<<"@";
-      else printe(operator[](i));
+  std::cout<<"+";
+  for(int i=0;i<width;i++)std::cout<<"-";
+  std::cout<<"+"<<std::endl;
+  for(i.y=0;i.y<height;i.y++){
+    std::cout<<"|";
+    for(i.x=0;i.x<width;i.x++){
+      printe(operator[](i));
     }
+    std::cout<<"|";
     std::cout<<std::endl;
   }
+  std::cout<<"+";
+  for(int i=0;i<width;i++)std::cout<<"-";
+  std::cout<<"+"<<std::endl;
+}
+
+void arena::print(vector2 p){
+  vector2 i;
+
+  std::cout<<"+";
+  for(int i=0;i<width;i++)std::cout<<"-";
+  std::cout<<"+"<<std::endl;
+  for(i.y=0;i.y<height;i.y++){
+    std::cout<<"|";
+    for(i.x=0;i.x<width;i.x++){
+      if(p == i)std::cout<<"@";
+      else printe(operator[](i));
+    }
+    std::cout<<"|";
+    std::cout<<std::endl;
+  }
+  std::cout<<"+";
+  for(int i=0;i<width;i++)std::cout<<"-";
+  std::cout<<"+"<<std::endl;
 }
 
 void arena::setrobots(const int num,vector2& p){
@@ -56,7 +88,7 @@ void arena::setrobots(const int num,vector2& p){
     vector2 i;
     for(i.x=0;i.x<width;i.x++){
       for(i.y=0;i.y<height;i.y++){
-	vector2 vt(rand()%width,rand()%height);
+	vector2 vt(random()%width,random()%height);
 	arena_e tmp = operator[](i);
 	operator[](i) = operator[](vt);
 	operator[](vt) = tmp;
@@ -72,30 +104,28 @@ void arena::setrobots(const int num,vector2& p){
   p = vlast;
 }
 
+bool arena::isblank(){return robotsc==0;}
+
 int arena::update(vector2 p){
   vector2 i;
   vector2 d;
   vector2 n;
   arena temp_arena(this);
   int score = 0;
-
+  
   for(i.y=0;i.y<height;i.y++){
     for(i.x=0;i.x<width;i.x++)
       if(temp_arena[i] == _ROBOT1)temp_arena[i] = _NONE;
   }
   
-  temp_arena.print(p);
   for(i.y=0;i.y<height;i.y++){
     for(i.x=0;i.x<width;i.x++) {
       if(operator[](i) == _ROBOT1){
 	d = nearest_direction(i,p);
 	n = d+i;
-	// std::cout << "d("<< d.x <<","<<d.y<<")";
-	// std::cout<<std::endl;
-	// std::cout << "n("<< n.x <<","<<n.y<<")"; 
-	// std::cout<<std::endl;
 	if(temp_arena[n] != _NONE){
-	  score += kill(temp_arena[i]);
+	  score += kill(operator[](i));
+	  score += kill(temp_arena[n]);
 	  temp_arena[n] = _HEAP;
 	}else{
 	  temp_arena[n] = operator[](i);
@@ -108,8 +138,30 @@ int arena::update(vector2 p){
     for(i.x=0;i.x<width;i.x++)
       operator[](i) = temp_arena[i];
   }
+
+  int ret;
+  
+  if(temp_arena[p]!=_NONE)ret = -1;
+  else ret = score;
+
+  temp_arena[p] = _PLAYER;
+  temp_arena.print();
+
+  return ret;
 }
 
+void arena::playerupdate(vector2& vp,const vector2& vdir){
+  vp += vdir;
+  if(vp.x < 0)vp.x = 0;
+  else if(vp.x >= width)vp.x = width-1;
+  if(vp.y < 0)vp.y = 0;
+  else if(vp.y >= height)vp.y = height - 1;
+}
+
+void arena::playermoverandomly(vector2& vp){
+  vp.x = random()%width;
+  vp.y = random()%height;
+}
 
 void arena::clear(){
   vector2 i;
