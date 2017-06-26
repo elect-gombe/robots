@@ -1,4 +1,5 @@
 #pragma once
+
 class arena{
 public:
   arena(int width,int height);
@@ -20,13 +21,12 @@ public:
     _PLAYER=3,
   };
   arena_e& operator[](vector2 v){return aren[v.y][v.x];}
-
+  void clear();  
 private:
   arena_e **aren;
   void printe(arena_e e);
   int width;
   int height;
   int robotsc;
-  void clear();
   int kill(arena_e e);
 };

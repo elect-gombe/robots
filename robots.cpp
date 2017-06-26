@@ -6,7 +6,7 @@
 
 extern "C"{
   char getChar(void);
-};
+}
 
 /*key settings*/
 /*key and move value
@@ -40,9 +40,10 @@ int main(void){
   char key;
   int score = 0;
   int ret;
+  int stage = 1;
   
   srandom(time(NULL));  
-  arena.setrobots(2,p);
+  arena.setrobots(5,p);
   arena.print(p);
 
   while(true){
@@ -55,9 +56,12 @@ int main(void){
       break;
     }
     score += ret;
-    std::cout<<"score"<<score<<std::endl;
+    std::cout<<"score:"<<score<<std::endl;
     if(arena.isblank()){
-      arena.setrobots(20,p);
+      arena.clear();
+      score += stage * 10;
+      stage++;
+      arena.setrobots(stage<8?stage*5:40,p);
       arena.print(p);
     }
   }

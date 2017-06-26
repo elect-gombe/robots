@@ -8,8 +8,11 @@ int arena::kill(arena_e e){
   int score;
   switch(e){
   case _ROBOT1:
-    score = 10;
+    score = 1;
     robotsc--;
+    break;
+  case _HEAP:
+    score = 0;
     break;
   default:
     score = -1;
@@ -28,7 +31,7 @@ void arena::printe(arena_e e){
     std::cout<<"+";
     break;
   case _HEAP:
-    std::cout<<"#";
+    std::cout<<"*";
     break;
   case _PLAYER:
     std::cout<<"@";
